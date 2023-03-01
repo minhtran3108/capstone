@@ -1,0 +1,25 @@
+**/venv
+# ignore moi file trong folder **/abc/**
+# ignore folder **/abcxh
+**/.DS_Store
+**/.vscode
+**/mlruns
+.idea
+*.zip
+*.rar
+*.pdf
+venv/**
+*.sql
+*.jpg 
+*.xls
+*.xlsx 
+*.dat
+*.yaml
+*.xgb
+*.dmg
+*.cdf
+*.tsv
+*.pyc
+*.sh
+**/log
+*.md

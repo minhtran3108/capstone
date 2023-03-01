@@ -1,0 +1,12 @@
+streamlit==1.19.0
+numpy
+pandas
+# matplotlib==1.5.3
+matplotlib==3.4.3
+seaborn
+scikit-learn
+squarify==0.4.3
+plotly
+feature_engine
+streamlit_yellowbrick==0.0.3
+yellowbrick

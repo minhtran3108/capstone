@@ -1,0 +1,1 @@
+web: sh setup.sh && streamlit run RFM_Clustering_GUI.py
