@@ -184,8 +184,9 @@ elif choice == "RFM Analysis":
     st.write("## Hierarchical")
     st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
     hc = hc_model()
-    data_RFM["RFM_Cluster"] = hc.labels_
-    st.write("Dataframe:",data_RFM)
+    st.write(hc.labesl_)
+    # data_RFM["RFM_Cluster"] = hc.labels_
+    # st.write("Dataframe:",data_RFM)
     # rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
     # rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
     #                                 ascending = [False,False,False])
