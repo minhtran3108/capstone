@@ -184,136 +184,135 @@ elif choice == "RFM Analysis":
     st.write("## Hierarchical")
     st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
     hc = hc_model()
-    st.write(hc.labesl_)
-    # data_RFM["RFM_Cluster"] = hc.labels_
+    data_RFM["RFM_Cluster"] = hc.labels_
     # st.write("Dataframe:",data_RFM)
-    # rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
-    # rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
-    #                                 ascending = [False,False,False])
-    # st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
-    # st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
-    #          dữ liệu được phân ra các nhóm (từ trên xuống):  
-    #     - Nhóm 1: Các khách hàng chi tiêu nhiều và thường xuyên, với lượng chi tiêu lớn  
-    #     - Nhóm 2: Các khách hàng chi tiêu và mức độ thường xuyên nằm ở mức khá  
-    #     - Nhóm 3: Các khách hàng chi tiêu ít và không thường xuyên  
-    #     - Nhóm 4: Các khách hàng chi tiếu ít và đã lâu không phát sinh giao dịch.""")
-    # current_labels = rfm_hc_agg.RFM_Cluster.unique()
-    # desired_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
-    # st.write('Đặt tên các nhóm từ trên xuống là:')
-    # s= ''
-    # for i in desired_labels:
-    #     s += "- " + i + "\n"
-    # st.markdown(s)
-    # # create a dictionary for your corresponding values
-    # map_dict_hc = dict(zip(current_labels, desired_labels))
-    # # map the desired values back to the dataframe
-    # rfm_hc_agg['RFM_Cluster'] = rfm_hc_agg['RFM_Cluster'].map(map_dict_hc)
-    # # map the desired values back to the data_RFM
-    # data_RFM['RFM_Cluster'] = data_RFM['RFM_Cluster'].map(map_dict_hc)
-    # st.dataframe(rfm_hc_agg)
-    ## Visualization the Result
-    # colors_dict3 = {'RISK':'yellow','BIG SPENDER':'royalblue',
-    #         'REGULAR':'green', 'STARS':'gold'}
-    # st.write("""## Visualization the Result""")
+    rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
+    rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
+                                    ascending = [False,False,False])
+    st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
+    st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
+             dữ liệu được phân ra các nhóm (từ trên xuống):  
+        - Nhóm 1: Các khách hàng chi tiêu nhiều và thường xuyên, với lượng chi tiêu lớn  
+        - Nhóm 2: Các khách hàng chi tiêu và mức độ thường xuyên nằm ở mức khá  
+        - Nhóm 3: Các khách hàng chi tiêu ít và không thường xuyên  
+        - Nhóm 4: Các khách hàng chi tiếu ít và đã lâu không phát sinh giao dịch.""")
+    current_labels = rfm_hc_agg.RFM_Cluster.unique()
+    desired_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
+    st.write('Đặt tên các nhóm từ trên xuống là:')
+    s= ''
+    for i in desired_labels:
+        s += "- " + i + "\n"
+    st.markdown(s)
+    # create a dictionary for your corresponding values
+    map_dict_hc = dict(zip(current_labels, desired_labels))
+    # map the desired values back to the dataframe
+    rfm_hc_agg['RFM_Cluster'] = rfm_hc_agg['RFM_Cluster'].map(map_dict_hc)
+    # map the desired values back to the data_RFM
+    data_RFM['RFM_Cluster'] = data_RFM['RFM_Cluster'].map(map_dict_hc)
+    st.dataframe(rfm_hc_agg)
+    # Visualization the Result
+    colors_dict3 = {'RISK':'yellow','BIG SPENDER':'royalblue',
+            'REGULAR':'green', 'STARS':'gold'}
+    st.write("""## Visualization the Result""")
     
-    # ################################################################
-    # ## Radio box
-    # chart_type = st.radio(
-    # "What's kind of visualization graph you want to check?",
-    # ('Customer Segmentation & Amount Spent',
-    #  'Customer Segmentation - Ration',
-    #  'Customer Segmentation - Tree map', 
-    #  'Customer Segmentation - Scatter Plot',
-    #  'Customer Segmentation - 3D Scatter Plot'))
-    # ################################################################
-    # if chart_type == 'Customer Segmentation & Amount Spent':
-    #     ################################################################
-    #     ## BarPlot
-    #     fig1, ax1 = plt.subplots(figsize=(8, 8))
-    #     ax2 = ax1.twinx()
-    #     ax1.bar(rfm_hc_agg['RFM_Cluster'], rfm_hc_agg['Quantity'], color = 'blue')
-    #     ax1.yaxis.set_major_locator(LinearLocator(9))
-    #     # Line Chart
-    #     ax2.plot(rfm_hc_agg['RFM_Cluster'], rfm_hc_agg['TotalAmount'], color = 'red', linestyle ='--')
-    #     # Bar chart setting
-    #     ax1.set_yticklabels(['{:,}'.format(int(x)) for x in ax1.get_yticks().tolist()])
-    #     ax1.set_xlabel("Customer Segment")
-    #     ax1.set_ylabel("Quantity", color='blue', fontsize=14)
-    #     ax1.tick_params(axis="y", labelcolor = 'blue' )
-    #     # Line chart setting
-    #     ax2.yaxis.set_major_locator(LinearLocator(9))
-    #     locator = LinearLocator(numticks=10)
-    #     ax2.set_yticklabels(['{:,}'.format(int(x)) for x in ax2.get_yticks().tolist()])
-    #     ax2.set_ylabel("TotalAmount ($) ", color='red', fontsize=14)
-    #     ax2.tick_params(axis="y", labelcolor='red')
-    #     fig1.suptitle("Customer Segment & Amount Spent - Hierarchical", fontsize=20)
-    #     st.markdown("<h3 style='text-align: center; color: black;'>Bar chart</h3>", unsafe_allow_html=True)
-    #     st.pyplot(fig1)
-    #     fn1 = 'graph/Hierarchical_Customer_SegmentandAmountSpent.png'
-    #     save_graph(fig1, fn1)
-    # ################################################################
-    # elif chart_type == 'Customer Segmentation - Ration':
-    #     ################################################################
-    #     ## PiePlot
-    #     fig3, ax3= plt.subplots(figsize=(8, 8))
-    #     ax3 = plt.pie(rfm_hc_agg['Quantity'], autopct='%.2f%%',labels=None)
-    #     plt.title('Tỉ lệ của các cluster',fontsize=13)
-    #     plt.legend(labels=rfm_hc_agg['RFM_Cluster'], loc="upper left")
-    #     plt.axis('off')
-    #     st.markdown("<h3 style='text-align: center; color: black;'>Pie chart</h3>", unsafe_allow_html=True)
-    #     st.pyplot(fig3)
-    #     fn3 = 'graph/Hierarchical_Customer_Segment_Ration_PieChart.png'
-    #     save_graph(fig3, fn3)
-    # ################################################################
-    # elif chart_type == 'Customer Segmentation - Tree map':
-    #     ################################################################
-    #     ## Tree Map
-    #     fig4, ax4 = plt.subplots(figsize=(14, 10))
-    #     ax4 = squarify.plot(sizes=rfm_hc_agg['Quantity'],
-    #                 text_kwargs={'fontsize':8,'weight':'bold'},
-    #                 color = colors_dict3.values(),
-    #                 label=['{}\n{:.0f} days \n{:.0f} orders \n{:.0f} $ \nCustomer: {:.0f} ({}%) \nAmount: {:,}({}%)'\
-    #                         .format(rfm_hc_agg.iloc[i][0],rfm_hc_agg.iloc[i][1],rfm_hc_agg.iloc[i][2],rfm_hc_agg.iloc[i][3],
-    #                                 rfm_hc_agg.iloc[i][4],rfm_hc_agg.iloc[i][6],rfm_hc_agg.iloc[i][5],rfm_hc_agg.iloc[i][7])
-    #                         for i in range(0, len(rfm_hc_agg))], alpha=0.5 )
+    ################################################################
+    ## Radio box
+    chart_type = st.radio(
+    "What's kind of visualization graph you want to check?",
+    ('Customer Segmentation & Amount Spent',
+     'Customer Segmentation - Ration',
+     'Customer Segmentation - Tree map', 
+     'Customer Segmentation - Scatter Plot',
+     'Customer Segmentation - 3D Scatter Plot'))
+    ################################################################
+    if chart_type == 'Customer Segmentation & Amount Spent':
+        ################################################################
+        ## BarPlot
+        fig1, ax1 = plt.subplots(figsize=(8, 8))
+        ax2 = ax1.twinx()
+        ax1.bar(rfm_hc_agg['RFM_Cluster'], rfm_hc_agg['Quantity'], color = 'blue')
+        ax1.yaxis.set_major_locator(LinearLocator(9))
+        # Line Chart
+        ax2.plot(rfm_hc_agg['RFM_Cluster'], rfm_hc_agg['TotalAmount'], color = 'red', linestyle ='--')
+        # Bar chart setting
+        ax1.set_yticklabels(['{:,}'.format(int(x)) for x in ax1.get_yticks().tolist()])
+        ax1.set_xlabel("Customer Segment")
+        ax1.set_ylabel("Quantity", color='blue', fontsize=14)
+        ax1.tick_params(axis="y", labelcolor = 'blue' )
+        # Line chart setting
+        ax2.yaxis.set_major_locator(LinearLocator(9))
+        locator = LinearLocator(numticks=10)
+        ax2.set_yticklabels(['{:,}'.format(int(x)) for x in ax2.get_yticks().tolist()])
+        ax2.set_ylabel("TotalAmount ($) ", color='red', fontsize=14)
+        ax2.tick_params(axis="y", labelcolor='red')
+        fig1.suptitle("Customer Segment & Amount Spent - Hierarchical", fontsize=20)
+        st.markdown("<h3 style='text-align: center; color: black;'>Bar chart</h3>", unsafe_allow_html=True)
+        st.pyplot(fig1)
+        fn1 = 'graph/Hierarchical_Customer_SegmentandAmountSpent.png'
+        save_graph(fig1, fn1)
+    ################################################################
+    elif chart_type == 'Customer Segmentation - Ration':
+        ################################################################
+        ## PiePlot
+        fig3, ax3= plt.subplots(figsize=(8, 8))
+        ax3 = plt.pie(rfm_hc_agg['Quantity'], autopct='%.2f%%',labels=None)
+        plt.title('Tỉ lệ của các cluster',fontsize=13)
+        plt.legend(labels=rfm_hc_agg['RFM_Cluster'], loc="upper left")
+        plt.axis('off')
+        st.markdown("<h3 style='text-align: center; color: black;'>Pie chart</h3>", unsafe_allow_html=True)
+        st.pyplot(fig3)
+        fn3 = 'graph/Hierarchical_Customer_Segment_Ration_PieChart.png'
+        save_graph(fig3, fn3)
+    ################################################################
+    elif chart_type == 'Customer Segmentation - Tree map':
+        ################################################################
+        ## Tree Map
+        fig4, ax4 = plt.subplots(figsize=(14, 10))
+        ax4 = squarify.plot(sizes=rfm_hc_agg['Quantity'],
+                    text_kwargs={'fontsize':8,'weight':'bold'},
+                    color = colors_dict3.values(),
+                    label=['{}\n{:.0f} days \n{:.0f} orders \n{:.0f} $ \nCustomer: {:.0f} ({}%) \nAmount: {:,}({}%)'\
+                            .format(rfm_hc_agg.iloc[i][0],rfm_hc_agg.iloc[i][1],rfm_hc_agg.iloc[i][2],rfm_hc_agg.iloc[i][3],
+                                    rfm_hc_agg.iloc[i][4],rfm_hc_agg.iloc[i][6],rfm_hc_agg.iloc[i][5],rfm_hc_agg.iloc[i][7])
+                            for i in range(0, len(rfm_hc_agg))], alpha=0.5 )
 
-    #     ax4.set_title("Customers Segments - Hierarchical",fontsize=26,fontweight="bold")
-    #     plt.axis('off')
-    #     st.markdown("<h3 style='text-align: center; color: black;'>Tree Map</h3>", unsafe_allow_html=True)
-    #     st.pyplot(fig4)
-    #     fn4 = 'graph/Hierarchical_Customer_Segment_TreeMap.png'
-    #     save_graph(fig4, fn4)
-    # ################################################################
-    # elif chart_type == 'Customer Segmentation - Scatter Plot':
-    #     ################################################################
-    #     ## Scatter Plot
-    #     fig5 = px.scatter(rfm_hc_agg, x="RecencyMean", y="MonetaryMean", size="FrequencyMean",
-    #                     color = "RFM_Cluster", color_discrete_map = colors_dict3,
-    #                     hover_name="RFM_Cluster", size_max=100)
-    #     st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot</h3>", unsafe_allow_html=True)
-    #     st.plotly_chart(fig5)
-    # ################################################################
-    # elif chart_type == 'Customer Segmentation - 3D Scatter Plot':
-    #     ################################################################
-    #     ## Scatter Plot - 3D
-    #     fig6 = px.scatter_3d(data_RFM, x='Recency', y='Frequency', z='Monetary',
-    #                     color = 'RFM_Cluster', opacity=0.3,color_discrete_map = colors_dict3)
-    #     fig6.update_traces(marker=dict(size=5),
-    #                     selector=dict(mode='markers'))
-    #     st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot 3D </h3>", unsafe_allow_html=True)
-    #     st.plotly_chart(fig6)
+        ax4.set_title("Customers Segments - Hierarchical",fontsize=26,fontweight="bold")
+        plt.axis('off')
+        st.markdown("<h3 style='text-align: center; color: black;'>Tree Map</h3>", unsafe_allow_html=True)
+        st.pyplot(fig4)
+        fn4 = 'graph/Hierarchical_Customer_Segment_TreeMap.png'
+        save_graph(fig4, fn4)
+    ################################################################
+    elif chart_type == 'Customer Segmentation - Scatter Plot':
+        ################################################################
+        ## Scatter Plot
+        fig5 = px.scatter(rfm_hc_agg, x="RecencyMean", y="MonetaryMean", size="FrequencyMean",
+                        color = "RFM_Cluster", color_discrete_map = colors_dict3,
+                        hover_name="RFM_Cluster", size_max=100)
+        st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot</h3>", unsafe_allow_html=True)
+        st.plotly_chart(fig5)
+    ################################################################
+    elif chart_type == 'Customer Segmentation - 3D Scatter Plot':
+        ################################################################
+        ## Scatter Plot - 3D
+        fig6 = px.scatter_3d(data_RFM, x='Recency', y='Frequency', z='Monetary',
+                        color = 'RFM_Cluster', opacity=0.3,color_discrete_map = colors_dict3)
+        fig6.update_traces(marker=dict(size=5),
+                        selector=dict(mode='markers'))
+        st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot 3D </h3>", unsafe_allow_html=True)
+        st.plotly_chart(fig6)
     
-    # ## Export the result
-    # st.write("# Export the result")
-    # data_save = data_RFM.drop(['R_sc', 'F_sc', 'M_sc'], axis=1).reset_index(drop = True)
-    # st.write("Dữ liệu phân nhóm khách hàng", data_save[::500])
-    # # data_save_fn = 'result_data/customer_segment_data.csv'
-    # # data_save.to_csv(data_save_fn,index = False).encode('utf-8')
-    # csv = convert_df(data_save)
-    # st.download_button(label="Download customer segment data as CSV",
-    #                    file_name='customer_segment_data.csv',
-    #                    mime='text/csv',
-    #                    data=csv)
+    ## Export the result
+    st.write("# Export the result")
+    data_save = data_RFM.drop(['R_sc', 'F_sc', 'M_sc'], axis=1).reset_index(drop = True)
+    st.write("Dữ liệu phân nhóm khách hàng", data_save[::500])
+    # data_save_fn = 'result_data/customer_segment_data.csv'
+    # data_save.to_csv(data_save_fn,index = False).encode('utf-8')
+    csv = convert_df(data_save)
+    st.download_button(label="Download customer segment data as CSV",
+                       file_name='customer_segment_data.csv',
+                       mime='text/csv',
+                       data=csv)
 
 elif choice == "Predict new customer":
     st.subheader("Dự đoán khách hàng mới bằng KMeans dựa trên cách phân cụm khách hàng theo thuật toán Hierarchical")
