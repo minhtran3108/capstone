@@ -28,12 +28,17 @@ from yellowbrick.classifier import ConfusionMatrix, ClassificationReport, ROCAUC
 
 import pickle
 
-@st.cache_resource
-def hc_model():
+
+@st.cache_data
+def get_hc_labels(data: Dataframe):
     with st.echo():
         hc = AgglomerativeClustering(n_clusters=4, affinity = 'euclidean', linkage ='ward')
-    hc.fit(data_RFM[['R_sc','F_sc','M_sc']])
-    return hc
+    hc.fit(data)
+    return hc.labels_
+
+@st.cache_data
+def run_model(inputs):
+    return model(inputs)
 
 def save_graph(plot: Figure, file_name):
     plot.savefig(file_name)
@@ -43,6 +48,11 @@ def save_graph(plot: Figure, file_name):
             data=img,
             file_name=file_name,
             mime="image/png")
+
+# @st.cache_data  # 👈 Add the caching decorator
+# def load_data(data):
+#     df = pd.read_csv(data)
+#     return 
 
 #------------------
 # Function
@@ -98,6 +108,7 @@ def info_dataframe(dataframe):
     s = buffer.getvalue()
     return s
 # Function to calculate average values and return the size for each segment
+@st.cache_data
 def calculate_segment(dataframe, col_cluster):
     rfm_agg = dataframe.groupby(col_cluster).agg({
     'Recency': 'mean',
@@ -183,8 +194,7 @@ elif choice == "RFM Analysis":
     st.write("## Customer Segmentation")
     st.write("## Hierarchical")
     st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
-    hc = hc_model()
-    data_RFM["RFM_Cluster"] = hc.labels_
+    data_RFM["RFM_Cluster"] = get_hc_labels(data_RFM[['R_sc','F_sc','M_sc']])
     # st.write("Dataframe:",data_RFM)
     rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
     rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
