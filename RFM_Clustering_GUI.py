@@ -36,9 +36,22 @@ def get_hc_labels(data: pd.DataFrame):
     hc.fit(data)
     return hc.labels_
 
-@st.cache_data
-def run_model(inputs):
-    return model(inputs)
+@st.cache_resource
+def KNN_best_model(X_train, y_train):
+        with st.echo():
+            kf = KFold(n_splits=5)
+            # Use GridSearchCV to find the best parameters for the models
+            from sklearn.model_selection import GridSearchCV
+            # Create a list of parameters of Logistic Regression for the GridSearchCV
+            k_range = [6, 10 ,15, 20, 25]
+            param_grid = dict(n_neighbors=k_range)
+            # Create a list of models to test
+            clf_grid = GridSearchCV(KNeighborsClassifier(), param_grid, cv=kf, n_jobs=-1)
+            search_clf = clf_grid.fit(X_train, y_train)
+            best_clf = search_clf.best_estimator_
+            # Build model with best Parameter
+            best_model = KNeighborsClassifier(n_neighbors=clf_grid.best_params_['n_neighbors'])
+        return best_model
 
 def save_graph(plot: Figure, file_name):
     plot.savefig(file_name)
@@ -121,6 +134,8 @@ def calculate_segment(dataframe, col_cluster):
     rfm_agg['Percent_Amount'] = round((rfm_agg['TotalAmount']/rfm_agg.TotalAmount.sum())*100, 2)
     # Reset the index
     rfm_agg = rfm_agg.reset_index()
+    rfm_agg = rfm_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
+                                    ascending = [False,False,False])
     return rfm_agg
 @st.cache_data
 def convert_df(df):
@@ -197,8 +212,6 @@ elif choice == "RFM Analysis":
     data_RFM["RFM_Cluster"] = get_hc_labels(data_RFM[['R_sc','F_sc','M_sc']])
     # st.write("Dataframe:",data_RFM)
     rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
-    rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
-                                    ascending = [False,False,False])
     st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
     st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
              dữ liệu được phân ra các nhóm (từ trên xuống):  
@@ -364,19 +377,7 @@ elif choice == "Predict new customer":
     ## Build Model
     ### GridSearch to find best Parameter
     st.write("### Find the best ParaMeter with GridSearchCV")
-    with st.echo():
-        kf = KFold(n_splits=5)
-        # Use GridSearchCV to find the best parameters for the models
-        from sklearn.model_selection import GridSearchCV
-        # Create a list of parameters of Logistic Regression for the GridSearchCV
-        k_range = [6, 10 ,15, 20, 25]
-        param_grid = dict(n_neighbors=k_range)
-        # Create a list of models to test
-        clf_grid = GridSearchCV(KNeighborsClassifier(), param_grid, cv=kf, n_jobs=-1)
-        search_clf = clf_grid.fit(X_train, y_train)
-        best_clf = search_clf.best_estimator_
-        # Build model with best Parameter
-        best_model = KNeighborsClassifier(n_neighbors=clf_grid.best_params_['n_neighbors'])
+    best_model = KNN_best_model(X_train, y_train)
     # Fit the best model to the training data
     model = best_model.fit(X_train, y_train)    
     ## Evaluate
