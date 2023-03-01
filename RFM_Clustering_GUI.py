@@ -183,33 +183,33 @@ elif choice == "RFM Analysis":
     st.write("## Customer Segmentation")
     st.write("## Hierarchical")
     st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
-    # hc = hc_model()
-    # data_RFM["RFM_Cluster"] = hc.labels_
-    # rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
-    # rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
-    #                                 ascending = [False,False,False])
-    # st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
-    # st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
-    #          dữ liệu được phân ra các nhóm (từ trên xuống):  
-    #     - Nhóm 1: Các khách hàng chi tiêu nhiều và thường xuyên, với lượng chi tiêu lớn  
-    #     - Nhóm 2: Các khách hàng chi tiêu và mức độ thường xuyên nằm ở mức khá  
-    #     - Nhóm 3: Các khách hàng chi tiêu ít và không thường xuyên  
-    #     - Nhóm 4: Các khách hàng chi tiếu ít và đã lâu không phát sinh giao dịch.""")
-    # current_labels = rfm_hc_agg.RFM_Cluster.unique()
-    # desired_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
-    # st.write('Đặt tên các nhóm từ trên xuống là:')
-    # s= ''
-    # for i in desired_labels:
-    #     s += "- " + i + "\n"
-    # st.markdown(s)
-    # # create a dictionary for your corresponding values
-    # map_dict_hc = dict(zip(current_labels, desired_labels))
-    # # map the desired values back to the dataframe
-    # rfm_hc_agg['RFM_Cluster'] = rfm_hc_agg['RFM_Cluster'].map(map_dict_hc)
-    # # map the desired values back to the data_RFM
-    # data_RFM['RFM_Cluster'] = data_RFM['RFM_Cluster'].map(map_dict_hc)
-    # st.dataframe(rfm_hc_agg)
-    # ## Visualization the Result
+    hc = hc_model()
+    data_RFM["RFM_Cluster"] = hc.labels_
+    rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
+    rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
+                                    ascending = [False,False,False])
+    st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
+    st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
+             dữ liệu được phân ra các nhóm (từ trên xuống):  
+        - Nhóm 1: Các khách hàng chi tiêu nhiều và thường xuyên, với lượng chi tiêu lớn  
+        - Nhóm 2: Các khách hàng chi tiêu và mức độ thường xuyên nằm ở mức khá  
+        - Nhóm 3: Các khách hàng chi tiêu ít và không thường xuyên  
+        - Nhóm 4: Các khách hàng chi tiếu ít và đã lâu không phát sinh giao dịch.""")
+    current_labels = rfm_hc_agg.RFM_Cluster.unique()
+    desired_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
+    st.write('Đặt tên các nhóm từ trên xuống là:')
+    s= ''
+    for i in desired_labels:
+        s += "- " + i + "\n"
+    st.markdown(s)
+    # create a dictionary for your corresponding values
+    map_dict_hc = dict(zip(current_labels, desired_labels))
+    # map the desired values back to the dataframe
+    rfm_hc_agg['RFM_Cluster'] = rfm_hc_agg['RFM_Cluster'].map(map_dict_hc)
+    # map the desired values back to the data_RFM
+    data_RFM['RFM_Cluster'] = data_RFM['RFM_Cluster'].map(map_dict_hc)
+    st.dataframe(rfm_hc_agg)
+    ## Visualization the Result
     # colors_dict3 = {'RISK':'yellow','BIG SPENDER':'royalblue',
     #         'REGULAR':'green', 'STARS':'gold'}
     # st.write("""## Visualization the Result""")
