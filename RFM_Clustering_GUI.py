@@ -30,7 +30,7 @@ import pickle
 
 
 @st.cache_data
-def get_hc_labels(data: Dataframe):
+def get_hc_labels(data: pd.DataFrame):
     with st.echo():
         hc = AgglomerativeClustering(n_clusters=4, affinity = 'euclidean', linkage ='ward')
     hc.fit(data)
