@@ -120,7 +120,7 @@ def convert_df(df):
 menu = ["Business Objective", "RFM Analysis", "Predict new customer" ]
 choice = st.sidebar.selectbox('Menu', menu)
 if choice == 'Business Objective':    
-    st.markdown("<h1 style='text-align: center; color: black;'>Customer Segementation</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: black;'>Customer Segmentation</h1>", unsafe_allow_html=True)
     st.subheader("Business Objective")
     st.write(""" ###### - Phân khúc/ nhóm/ cụm khách hàng (market segmentation còn được gọi là phân khúc thị trường) 
     là quá trình nhóm các khách hàng lại với nhau dựa trên các đặc điểm chung. Nó phân chia và nhóm 
@@ -138,7 +138,7 @@ if choice == 'Business Objective':
     """)
 elif choice == "RFM Analysis":
     st.markdown("<h1 style='text-align: center; color: black;'>Capstone Project</h1>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: black;'>Customer Segementation</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: black;'>Customer Segmentation</h2>", unsafe_allow_html=True)
     # Read data
     columns = ['customer_id', 'order_date', 'order_quantity', 'order_amounts']
     data = pd.read_csv('train_data/CDNOW_master.txt', names = columns ,header = None, sep ='\s+')
@@ -185,30 +185,31 @@ elif choice == "RFM Analysis":
     st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
     hc = hc_model()
     data_RFM["RFM_Cluster"] = hc.labels_
-    rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
-    rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
-                                    ascending = [False,False,False])
-    st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
-    st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
-             dữ liệu được phân ra các nhóm (từ trên xuống):  
-        - Nhóm 1: Các khách hàng chi tiêu nhiều và thường xuyên, với lượng chi tiêu lớn  
-        - Nhóm 2: Các khách hàng chi tiêu và mức độ thường xuyên nằm ở mức khá  
-        - Nhóm 3: Các khách hàng chi tiêu ít và không thường xuyên  
-        - Nhóm 4: Các khách hàng chi tiếu ít và đã lâu không phát sinh giao dịch.""")
-    current_labels = rfm_hc_agg.RFM_Cluster.unique()
-    desired_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
-    st.write('Đặt tên các nhóm từ trên xuống là:')
-    s= ''
-    for i in desired_labels:
-        s += "- " + i + "\n"
-    st.markdown(s)
-    # create a dictionary for your corresponding values
-    map_dict_hc = dict(zip(current_labels, desired_labels))
-    # map the desired values back to the dataframe
-    rfm_hc_agg['RFM_Cluster'] = rfm_hc_agg['RFM_Cluster'].map(map_dict_hc)
-    # map the desired values back to the data_RFM
-    data_RFM['RFM_Cluster'] = data_RFM['RFM_Cluster'].map(map_dict_hc)
-    st.dataframe(rfm_hc_agg)
+    st.write("Dataframe:",data_RFM)
+    # rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
+    # rfm_hc_agg = rfm_hc_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
+    #                                 ascending = [False,False,False])
+    # st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
+    # st.write("""Dựa trên kết quả phân cụm của thuật toán Hierarchical, 
+    #          dữ liệu được phân ra các nhóm (từ trên xuống):  
+    #     - Nhóm 1: Các khách hàng chi tiêu nhiều và thường xuyên, với lượng chi tiêu lớn  
+    #     - Nhóm 2: Các khách hàng chi tiêu và mức độ thường xuyên nằm ở mức khá  
+    #     - Nhóm 3: Các khách hàng chi tiêu ít và không thường xuyên  
+    #     - Nhóm 4: Các khách hàng chi tiếu ít và đã lâu không phát sinh giao dịch.""")
+    # current_labels = rfm_hc_agg.RFM_Cluster.unique()
+    # desired_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
+    # st.write('Đặt tên các nhóm từ trên xuống là:')
+    # s= ''
+    # for i in desired_labels:
+    #     s += "- " + i + "\n"
+    # st.markdown(s)
+    # # create a dictionary for your corresponding values
+    # map_dict_hc = dict(zip(current_labels, desired_labels))
+    # # map the desired values back to the dataframe
+    # rfm_hc_agg['RFM_Cluster'] = rfm_hc_agg['RFM_Cluster'].map(map_dict_hc)
+    # # map the desired values back to the data_RFM
+    # data_RFM['RFM_Cluster'] = data_RFM['RFM_Cluster'].map(map_dict_hc)
+    # st.dataframe(rfm_hc_agg)
     ## Visualization the Result
     # colors_dict3 = {'RISK':'yellow','BIG SPENDER':'royalblue',
     #         'REGULAR':'green', 'STARS':'gold'}
@@ -219,10 +220,10 @@ elif choice == "RFM Analysis":
     # chart_type = st.radio(
     # "What's kind of visualization graph you want to check?",
     # ('Customer Segmentation & Amount Spent',
-    #  'Customer Segementation - Ration',
-    #  'Customer Segementation - Tree map', 
-    #  'Customer Segementation - Scatter Plot',
-    #  'Customer Segementation - 3D Scatter Plot'))
+    #  'Customer Segmentation - Ration',
+    #  'Customer Segmentation - Tree map', 
+    #  'Customer Segmentation - Scatter Plot',
+    #  'Customer Segmentation - 3D Scatter Plot'))
     # ################################################################
     # if chart_type == 'Customer Segmentation & Amount Spent':
     #     ################################################################
@@ -250,7 +251,7 @@ elif choice == "RFM Analysis":
     #     fn1 = 'graph/Hierarchical_Customer_SegmentandAmountSpent.png'
     #     save_graph(fig1, fn1)
     # ################################################################
-    # elif chart_type == 'Customer Segementation - Ration':
+    # elif chart_type == 'Customer Segmentation - Ration':
     #     ################################################################
     #     ## PiePlot
     #     fig3, ax3= plt.subplots(figsize=(8, 8))
@@ -263,7 +264,7 @@ elif choice == "RFM Analysis":
     #     fn3 = 'graph/Hierarchical_Customer_Segment_Ration_PieChart.png'
     #     save_graph(fig3, fn3)
     # ################################################################
-    # elif chart_type == 'Customer Segementation - Tree map':
+    # elif chart_type == 'Customer Segmentation - Tree map':
     #     ################################################################
     #     ## Tree Map
     #     fig4, ax4 = plt.subplots(figsize=(14, 10))
@@ -282,7 +283,7 @@ elif choice == "RFM Analysis":
     #     fn4 = 'graph/Hierarchical_Customer_Segment_TreeMap.png'
     #     save_graph(fig4, fn4)
     # ################################################################
-    # elif chart_type == 'Customer Segementation - Scatter Plot':
+    # elif chart_type == 'Customer Segmentation - Scatter Plot':
     #     ################################################################
     #     ## Scatter Plot
     #     fig5 = px.scatter(rfm_hc_agg, x="RecencyMean", y="MonetaryMean", size="FrequencyMean",
@@ -291,7 +292,7 @@ elif choice == "RFM Analysis":
     #     st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot</h3>", unsafe_allow_html=True)
     #     st.plotly_chart(fig5)
     # ################################################################
-    # elif chart_type == 'Customer Segementation - 3D Scatter Plot':
+    # elif chart_type == 'Customer Segmentation - 3D Scatter Plot':
     #     ################################################################
     #     ## Scatter Plot - 3D
     #     fig6 = px.scatter_3d(data_RFM, x='Recency', y='Frequency', z='Monetary',
