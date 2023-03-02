@@ -29,13 +29,6 @@ from yellowbrick.classifier import ConfusionMatrix, ClassificationReport, ROCAUC
 import pickle
 
 
-@st.cache_data
-def get_hc_labels(data: pd.DataFrame):
-    with st.echo():
-        hc = AgglomerativeClustering(n_clusters=4, affinity = 'euclidean', linkage ='ward')
-    hc.fit(data)
-    return hc.labels_
-
 @st.cache_resource
 def KNN_best_model(X_train, y_train):
         with st.echo():
@@ -51,7 +44,15 @@ def KNN_best_model(X_train, y_train):
             best_clf = search_clf.best_estimator_
             # Build model with best Parameter
             best_model = KNeighborsClassifier(n_neighbors=clf_grid.best_params_['n_neighbors'])
-        return best_model
+            model = best_model.fit(X_train, y_train)
+        return model
+    
+@st.cache_resource
+def load_pickle(pkl_filename):
+    with open(pkl_filename, 'rb') as file:  
+        model = pickle.load(file)
+    return model
+
 
 def save_graph(plot: Figure, file_name):
     plot.savefig(file_name)
@@ -62,13 +63,27 @@ def save_graph(plot: Figure, file_name):
             file_name=file_name,
             mime="image/png")
 
-# @st.cache_data  # 👈 Add the caching decorator
-# def load_data(data):
-#     df = pd.read_csv(data)
-#     return 
 
 #------------------
 # Function
+@st.cache_data  # 
+def load_data(file_name):
+    df = pd.read_csv(file_name)
+    return df
+
+@st.cache_data  # 
+def load_data_train(file_name):
+    df = pd.read_csv(file_name)
+    # Create transaction index
+    df['transaction_index'] = range(1, len(df)+1)
+    # Convert order_date to datetime type
+    df['order_date'] = df['order_date'].apply(lambda x: pd.to_datetime(x,format='%Y%m%d', errors='coerce'))
+    # Remove duplicated rows
+    df = df.drop_duplicates().reset_index(drop=True)
+    # Remove Null rows
+    df  = df.dropna().reset_index(drop=True)
+    return df
+
 @st.cache_data
 def visualize_numeric_data(dataframe,drop_columns):
     numbers = dataframe.drop([drop_columns], axis =1).select_dtypes(['int16', 'int32', 'int64', 'float16', 'float32', 'float64']).columns
@@ -98,6 +113,7 @@ def calculate_RFM(dataframe):
     # Rename the columns of dataframe
     dataframe_RFM.columns = ['customer_id', 'Recency', 'Frequency', 'Monetary']
     return dataframe_RFM
+
 # Function to normalization and scaling data
 @st.cache_data
 def normalize_scaling_dataframe(dataframe, _scaling_type = RobustScaler()): # default RobusScaler()
@@ -113,6 +129,15 @@ def normalize_scaling_dataframe(dataframe, _scaling_type = RobustScaler()): # de
     new_cols = ['R_sc','F_sc','M_sc']
     dataframe[new_cols] = features
     return dataframe
+# Function to apply hierarchical clustering
+@st.cache_data
+def get_hc_labels(data: pd.DataFrame):
+    data = normalize_scaling_dataframe(data, _scaling_type = RobustScaler()) 
+    with st.echo():
+        hc = AgglomerativeClustering(n_clusters=4, affinity = 'euclidean', linkage ='ward')
+    hc.fit(data[['R_sc','F_sc','M_sc']])
+    return hc.labels_
+
 # Function get info of dataframe for streamlit
 @st.cache_data
 def info_dataframe(dataframe):
@@ -120,6 +145,7 @@ def info_dataframe(dataframe):
     dataframe.info(buf = buffer)
     s = buffer.getvalue()
     return s
+
 # Function to calculate average values and return the size for each segment
 @st.cache_data
 def calculate_segment(dataframe, col_cluster):
@@ -148,26 +174,46 @@ choice = st.sidebar.selectbox('Menu', menu)
 if choice == 'Business Objective':    
     st.markdown("<h1 style='text-align: center; color: black;'>Customer Segmentation</h1>", unsafe_allow_html=True)
     st.subheader("Business Objective")
-    st.write(""" ###### - Phân khúc/ nhóm/ cụm khách hàng (market segmentation còn được gọi là phân khúc thị trường) 
+    st.write("""#### Vấn đề:  
+Từ những khách hàng tiêu dùng lớn cho đến những khách hàng rời bỏ doanh nghiệp, 
+tất cả những khách hàng đều có nhu cầu và mong muốn đa dạng. Doanh nghiệp muốn khách hàng chi tiêu nhiều hơn
+từ những chiến dịch tiếp thị chương trình, sản phẩm mới tới khách hàng theo những cách khác nhau. 
+Tuy nhiên, câu hỏi đặt ra là làm thế nào để đưa ra được các chiến dịch tiếp thị phù hợp với những nhóm khách 
+hàng đang có nhu cầu để từ đó tăng tỷ lệ phản hồi từ khách hàng và từ đó tăng doanh số bán hàng. 
+Bài toán đặt ra là làm thế nào để có thể phân khúc khách hàng một cách tương đối chính xác dựa trên hành vi giao dịch lịch sử
+của khách hàng, thuật toán RFM sẽ giúp chúng ta giải quyết vấn đề này một cách nhanh chóng và hiệu quả.""")
+
+    st.write(""" #### - Phân khúc/ nhóm/ cụm khách hàng (market segmentation còn được gọi là phân khúc thị trường) 
     là quá trình nhóm các khách hàng lại với nhau dựa trên các đặc điểm chung. Nó phân chia và nhóm 
     khách hàng thành các nhóm nhỏ theo đặc điểm địa lý, nhân khẩu học, tâm lý học, hành vi (geographic, 
     demographic, psychographic, behavioral) và các đặc điểm khác.""")
-    st.write(""" ###### - Phân tích RFM (Recency, Frequency, Monetary) là: 
-    phương pháp tiếp cận dựa trên hành vi của khách hàng thành để nhóm thành các phân khúc. RFM phân nhóm khách hàng 
-    trên cơ sở các giao dịch mua hàng trước đó của họ, nhằm mục đích phục vụ khách hàng tốt hơn.""") 
-    st.write(""" ###### => Mục tiêu/ vấn đề: 
-    Xây dựng hệ thống phân cụm khách hàng dựa trên các thông tin do công ty cung cấp từ đó có thể giúp công ty xác định
-    các nhóm khách hàng khác nhau để có chiến lược kinh doanh, chăm sóc khách hàng phù hợp.
-    """)
     st.image("RFM_Model.png")
     st.write("""  *Read more information about the RFM [here](https://en.wikipedia.org/wiki/RFM_(market_research))*
     """)
+    st.write(""" #### - Phân tích RFM (Recency, Frequency, Monetary) 
+là một kĩ thuật phân khúc khách hàng dựa trên hành vi giao dịch của khách hàng trong quá khứ 
+để nhóm thành các phân khúc.
+   
+**Dựa trên 3 chỉ số chính:**  
+- Recency (R): Thời gian giao dịch cuối cùng.  
+- Frequency (F): Tổng số lần giao dịch chi tiêu.
+- Monetary value (M): Tổng só tiền giao dịch chi tiêu.  
+
+**Lợi ích của phân tích RFM:**
+- Tăng tỷ lệ giữ chân khách hàng.
+- Tăng tốc độ phản hồi từ khách hàng.
+- Tăng tỷ doanh thu từ khách hàng. """) 
+    st.write(""" ##### Mục tiêu: 
+    Xây dựng hệ thống phân cụm khách hàng dựa trên các thông tin do công ty cung cấp từ đó có thể giúp công ty xác định
+    các nhóm khách hàng khác nhau để có chiến lược kinh doanh, chăm sóc khách hàng phù hợp.
+    """)
+
 elif choice == "RFM Analysis":
     st.markdown("<h1 style='text-align: center; color: black;'>Capstone Project</h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Customer Segmentation</h2>", unsafe_allow_html=True)
     # Read data
-    columns = ['customer_id', 'order_date', 'order_quantity', 'order_amounts']
-    data = pd.read_csv('train_data/CDNOW_master.txt', names = columns ,header = None, sep ='\s+')
+    # data = load_data_train('train_data/CDNOW_master.csv')
+    data = load_data_train('train_data/CDNOW_sample.csv')
     # Upload file
     st.write("""## Read data""")
     st.write(""" Tải lên dữ liệu transaction data theo định dạng như hình sau:\n
@@ -175,15 +221,8 @@ elif choice == "RFM Analysis":
     st.image("data_upload_format.png")
     uploaded_file = st.file_uploader("Choose a file", type=['csv'])
     if uploaded_file is not None:
-        data = pd.read_csv(uploaded_file)
-    # Create transaction index
-    data['transaction_index'] = range(1, len(data)+1)
-    # Convert order_date to datetime type
-    data['order_date'] = data['order_date'].apply(lambda x: pd.to_datetime(x,format='%Y%m%d', errors='coerce'))
-    # Remove duplicated rows
-    data = data.drop_duplicates().reset_index(drop=True)
-    # Remove Null rows
-    data  = data.dropna().reset_index(drop=True)
+        data = load_data_train(uploaded_file)
+    
     st.dataframe(data.head(5))
     # st.text(info_dataframe(data))
     # Let’s take a closer look at the data we will need to manipulate.
@@ -200,16 +239,16 @@ elif choice == "RFM Analysis":
     # fig = visualize_numeric_data(data_RFM, 'customer_id')
     # st.pyplot(fig)
     ## Normalization
-    st.write("""## Normalization and Scaling""")
-    data_RFM = normalize_scaling_dataframe(data_RFM, _scaling_type = RobustScaler()) 
-    st.write('Dữ liệu sau khi được chuẩn hoá và scale',data_RFM.head(5))
-    st.write('Trực quan hoá dữ liệu sau khi được xử lý')
-    fig = visualize_numeric_data(data_RFM, 'customer_id')
-    st.pyplot(fig)
+    # st.write("""## Normalization and Scaling""")
+    # data_RFM = normalize_scaling_dataframe(data_RFM, _scaling_type = RobustScaler()) 
+    # st.write('Dữ liệu sau khi được chuẩn hoá và scale',data_RFM.head(5))
+    # st.write('Trực quan hoá dữ liệu sau khi được xử lý')
+    # fig = visualize_numeric_data(data_RFM, 'customer_id')
+    # st.pyplot(fig)
     st.write("## Customer Segmentation")
     st.write("## Hierarchical")
     st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
-    data_RFM["RFM_Cluster"] = get_hc_labels(data_RFM[['R_sc','F_sc','M_sc']])
+    data_RFM["RFM_Cluster"] = get_hc_labels(data_RFM)
     # st.write("Dataframe:",data_RFM)
     rfm_hc_agg = calculate_segment(data_RFM,'RFM_Cluster')
     st.write(rfm_hc_agg,'Kết quả phân cụm theo thuật toán Hierarchical với số lượng nhóm là 4:')
@@ -327,23 +366,22 @@ elif choice == "RFM Analysis":
     
     ## Export the result
     st.write("# Export the result")
-    data_save = data_RFM.drop(['R_sc', 'F_sc', 'M_sc'], axis=1).reset_index(drop = True)
-    st.write("Dữ liệu phân nhóm khách hàng", data_save[::500])
+    st.write("Dữ liệu phân nhóm khách hàng", data_RFM[:2357])
     # data_save_fn = 'result_data/customer_segment_data.csv'
-    # data_save.to_csv(data_save_fn,index = False).encode('utf-8')
-    csv = convert_df(data_save)
+    # data_RFM.to_csv(data_save_fn,index = False).encode('utf-8')
     st.download_button(label="Download customer segment data as CSV",
                        file_name='customer_segment_data.csv',
                        mime='text/csv',
-                       data=csv)
-
+                       data=convert_df(data_RFM))
+        
 elif choice == "Predict new customer":
     st.subheader("Dự đoán khách hàng mới bằng KMeans dựa trên cách phân cụm khách hàng theo thuật toán Hierarchical")
     current_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
     # Upload file
     st.write("""## Read data""")
-    data = pd.read_csv('result_data/customer_segment_data.csv')
-    st.write(""" Tải lên khách hàng phân cụm theo định dạng:\n
+    data = load_data('train_data/customer_segment_data_master.csv')
+    st.write("### Training data")
+    st.write(""" Tải lên dữ liệu training phân cụm khách hàng theo định dạng:\n
     ['customer_id', 'Recency', 'Frequency', 'Monetary', 'RFM_Cluster']""")
     st.write('Với các nhóm khách hàng như sau:')
     s= ''
@@ -351,7 +389,7 @@ elif choice == "Predict new customer":
         s += "- " + i + "\n"
     st.markdown(s)
     st.write("Dataframe theo format sau:")
-    st.image("data_upload_predict_new_format.png")
+    st.image("data_upload_training_predict_new_format.png")
     uploaded_file = st.file_uploader("Choose a file", type=['csv'])
     if uploaded_file is not None:
         data = pd.read_csv(uploaded_file)
@@ -377,16 +415,14 @@ elif choice == "Predict new customer":
     ## Build Model
     ### GridSearch to find best Parameter
     st.write("### Find the best ParaMeter with GridSearchCV")
-    best_model = KNN_best_model(X_train, y_train)
-    # Fit the best model to the training data
-    model = best_model.fit(X_train, y_train)    
-    ## Evaluate
+    # Fit the best model to the training data, fit to train data
+    model = KNN_best_model(X_train, y_train)    
     ### Accuracy
     st.write("### Accuracy")
     train_accuracy = accuracy_score(y_train,model.predict(X_train))*100
     test_accuracy = accuracy_score(y_test,model.predict(X_test))*100
     st.code(f'Train accuracy: {round(train_accuracy,2)}% \nTest accuracy: {round(test_accuracy,2)}%')
-    st.markdown("**Model KNN hoạt động tốt trên tập dữ liệu**")
+    st.markdown("**Model KNN hoạt động phù hợp trên tập dữ liệu**")
     
     st.write("## Result Report")    
     chart_type = st.radio(
@@ -440,11 +476,9 @@ elif choice == "Predict new customer":
     ### Predict New 
     st.write("## Predict New Customer")
     # Load scaling model pickle
-    with open(pkl_scaling_filename, 'rb') as file:  
-        scaling_model = pickle.load(file)
+    scaling_model = load_pickle("model/scaler_pickle.pkl")
     # Load model pickle
-    with open(pkl_model_filename, 'rb') as file:  
-        classification_model = pickle.load(file)
+    classification_model = load_pickle("model/KNN_pickle.pkl")
         
     # Inverse map dict
     inverse_map = {map_dict[k] : k for k in map_dict}
@@ -454,9 +488,12 @@ elif choice == "Predict new customer":
     type = st.radio("Upload data or Input data?", options=("Upload", "Input"))
     if type=="Upload":
         # Upload file
+        st.write(""" Tải lên dữ liệu training phân cụm khách hàng theo định dạng:
+        ['customer_id', 'Recency', 'Frequency', 'Monetary']""")
+        st.image("data_upload_predict_new_format.png")
         uploaded_file_1 = st.file_uploader("Choose a file", type=['csv'], key = 'Predict')
         if uploaded_file_1 is not None:
-            data_input = pd.read_csv(uploaded_file_1, header=None)
+            data_input = load_data(uploaded_file_1)
             # st.write(data_input.columns)
             # data_input = data_input[0]     
             flag = True       
@@ -473,8 +510,12 @@ elif choice == "Predict new customer":
     if flag:
         st.markdown("**Input:**")
         st.dataframe(data_input)
-        x_new = scaling_model.transform(data_input)
+        x_new = scaling_model.transform(data_input[['Recency','Frequency','Monetary']])
         data_input['predict'] = classification_model.predict(x_new)
         data_input['predict'] = data_input['predict'].map(inverse_map)
         st.markdown("**Result:**")
         st.dataframe(data_input)
+        st.download_button(label="Download predicted data as CSV",
+                    file_name='predicted_data.csv',
+                    mime='text/csv',
+                    data=convert_df(data_input))
