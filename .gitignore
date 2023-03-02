@@ -20,7 +20,7 @@ venv/**
 *.cdf
 *.tsv
 *.pyc
-*.sh
 **/log
 *.md
+*.dat
 __pycache__
