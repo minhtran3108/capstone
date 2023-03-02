@@ -219,9 +219,9 @@ elif choice == "RFM Analysis":
     st.write(""" Tải lên dữ liệu transaction data theo định dạng như hình sau:\n
     ['customer_id', 'order_date', 'order_quantity', 'order_amounts'] """)
     st.image("data_upload_format.png")
-    uploaded_file = st.file_uploader("Choose a file", type=['csv'])
-    if uploaded_file is not None:
-        data = load_data_train(uploaded_file)
+    uploaded_file_1 = st.file_uploader("Choose a file", type=['csv'])
+    if uploaded_file_1 is not None:
+        data = load_data_train(uploaded_file_1)
     
     st.dataframe(data.head(5))
     # st.text(info_dataframe(data))
@@ -390,9 +390,9 @@ elif choice == "Predict new customer":
     st.markdown(s)
     st.write("Dataframe theo format sau:")
     st.image("data_upload_training_predict_new_format.png")
-    uploaded_file = st.file_uploader("Choose a file", type=['csv'])
-    if uploaded_file is not None:
-        data = load_data(uploaded_file)
+    uploaded_file_2 = st.file_uploader("Choose a file", type=['csv'])
+    if uploaded_file_2 is not None:
+        data = load_data(uploaded_file_2)
     st.write('Dữ liệu training cho model KNN:',(data[:50]))
     st.write('Thông tin của dữ liệu')
     st.text(info_dataframe(data))
@@ -493,9 +493,9 @@ elif choice == "Predict new customer":
         st.write(""" Tải lên dữ liệu training phân cụm khách hàng theo định dạng:
         ['customer_id', 'Recency', 'Frequency', 'Monetary']""")
         st.image("data_upload_predict_new_format.png")
-        uploaded_file_1 = st.file_uploader("Choose a file", type=['csv'], key = 'Predict')
-        if uploaded_file_1 is not None:
-            data_input = load_data(uploaded_file_1)
+        uploaded_file_3 = st.file_uploader("Choose a file", type=['csv'], key = 'Predict')
+        if uploaded_file_3 is not None:
+            data_input = load_data(uploaded_file_3)
             # st.write(data_input.columns)
             # data_input = data_input[0]     
             flag = True       
