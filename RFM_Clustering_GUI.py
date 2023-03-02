@@ -392,8 +392,10 @@ elif choice == "Predict new customer":
     st.image("data_upload_training_predict_new_format.png")
     uploaded_file = st.file_uploader("Choose a file", type=['csv'])
     if uploaded_file is not None:
-        data = pd.read_csv(uploaded_file)
+        data = load_data(uploaded_file)
     st.write('Dữ liệu training cho model KNN:',(data[:50]))
+    st.write('Thông tin của dữ liệu')
+    st.text(info_dataframe(data))
     ## Convert category into numeric for target column
     desired_labels = [0,1,2,3]
     map_dict = dict(zip(current_labels, desired_labels))
