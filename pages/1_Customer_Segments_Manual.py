@@ -126,7 +126,7 @@ st.markdown("<h1 style='text-align: center;'>Capstone Project</h1>", unsafe_allo
 st.markdown("<h2 style='text-align: center;'>Customer Segmentation</h2>", unsafe_allow_html=True)
 # Read data
 # data = load_data_train('train_data/CDNOW_master.csv')
-data = load_data_train('train_data/CDNOW_master.csv')
+data = load_data_train('train_data/CDNOW_sample.csv')
 # Upload file
 st.write("""## Read data""")
 st.write(""" Tải lên dữ liệu transaction data theo định dạng như hình sau:\n

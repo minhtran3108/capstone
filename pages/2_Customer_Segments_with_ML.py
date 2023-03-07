@@ -31,12 +31,12 @@ def save_graph(plot: Figure, file_name):
 
 #------------------
 # Function
-@st.cache_data  # 
+@st.cache_data   
 def load_data(file_name):
     df = pd.read_csv(file_name)
     return df
 
-@st.cache_data  # 
+@st.cache_data  
 def load_data_train(file_name):
     df = pd.read_csv(file_name)
     # Create transaction index
@@ -99,6 +99,7 @@ def normalize_scaling_dataframe(dataframe, _scaling_type = RobustScaler()): # de
     new_cols = ['R_sc','F_sc','M_sc']
     dataframe[new_cols] = features
     return dataframe
+
 # Function to apply hierarchical clustering
 @st.cache_data
 def get_hc_labels(data: pd.DataFrame):
@@ -133,6 +134,7 @@ def calculate_segment(dataframe, col_cluster):
     rfm_agg = rfm_agg.sort_values(['MonetaryMean','FrequencyMean', 'RecencyMean'], 
                                     ascending = [False,False,False])
     return rfm_agg
+
 @st.cache_data
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
