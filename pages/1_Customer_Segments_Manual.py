@@ -228,7 +228,7 @@ if st.session_state['run'] == True:
     st.write("## Save the selected data")
     data_save = data_RFM[data_RFM['RFM_Cluster']=='Selected']
     data_save = data_save.drop('RFM_Cluster', axis = 1).reset_index(drop = True)
-    st.write("Dữ liệu khách hàng được lựa chọn", data_save[::250])
+    st.write("Dữ liệu khách hàng được lựa chọn", data_save[::10])
     st.write("Số lượng khách hàng được chọn là:", data_save.shape[0])
     # data_save_fn = 'result_data/valued_customers.csv'
     # data_RFM.to_csv(data_save_fn,index = False).encode('utf-8')
