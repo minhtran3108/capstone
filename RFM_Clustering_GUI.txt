@@ -1,3 +1,4 @@
+# version 1.0
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -34,7 +35,6 @@ def KNN_best_model(X_train, y_train):
         with st.echo():
             kf = KFold(n_splits=5)
             # Use GridSearchCV to find the best parameters for the models
-            from sklearn.model_selection import GridSearchCV
             # Create a list of parameters of Logistic Regression for the GridSearchCV
             k_range = [6, 10 ,15, 20, 25]
             param_grid = dict(n_neighbors=k_range)
@@ -456,24 +456,29 @@ elif choice == "Predict new customer":
         st_yellowbrick(rocauc)  
     st.markdown("**Thuật toán nhận diện tốt nhóm khách hàng tiềm năng là STARS và BIGSPENDER**")
     ################################
-    st.write("### Saving Pickle")
     # Save classification model as pickle
     pkl_model_filename = "model/KNN_pickle.pkl"
     with open(pkl_model_filename, 'wb') as file:  
         pickle.dump(model, file)
-    st.write("KNN pickle")
-    st.download_button("Download KNN Model Pickle", 
-                       data=pickle.dumps(model),
-                       file_name="KNN_pickle.pkl")
-    
+        
     # Save scaling model as  pickle
     pkl_scaling_filename = "model/scaler_pickle.pkl"  
     with open(pkl_scaling_filename, 'wb') as file:  
-        pickle.dump(scaler_wrapper, file)
-    st.write("Scaling Model pickle")
-    st.download_button("Download Scaling Model Pickle", 
+        pickle.dump(scaler_wrapper, file)   
+    st.write("### Saving Pickle")
+    col1, col2, = st.columns(2)
+    with col1:
+        st.markdown("##### KNN Model Pickle")
+        st.download_button("Download KNN Model Pickle", 
+                        data=pickle.dumps(model),
+                        file_name="KNN_pickle.pkl")
+
+    with col2:
+        st.markdown("##### Scaling Model pickle")
+        st.download_button("Download Scaling Model Pickle", 
                        data=pickle.dumps(scaler_wrapper),
                        file_name="scaler_pickle.pkl")
+        
     ################################################################
     ### Predict New 
     st.write("## Predict New Customer")
@@ -481,19 +486,32 @@ elif choice == "Predict new customer":
     scaling_model = load_pickle("model/scaler_pickle.pkl")
     # Load model pickle
     classification_model = load_pickle("model/KNN_pickle.pkl")
+    # st.write("### Loading Model File")    
+    # col1, col2, = st.columns(2)
+    # with col1:
+    #     st.markdown("##### KNN Model Pickle")
+    #     knn_file = st.file_uploader("Upload Model Predict", type=['pkl'], key = 'Model file')
+    #     if knn_file is not None:
+    #         classification_model = load_pickle(knn_file)
+    # with col2:
+    #     st.markdown("##### Scaling Model pickle")
+    #     scalinng_file = st.file_uploader("Upload Scaling Pickle", type=['pkl'], key = 'Scaling file')
+    #     if scalinng_file is not None:
+    #         classification_model = load_pickle(scalinng_file)
+
         
     # Inverse map dict
     inverse_map = {map_dict[k] : k for k in map_dict}
     ################################################################
     flag = False
     data_input = None
-    type = st.radio("Upload data or Input data?", options=("Upload", "Input"))
-    if type=="Upload":
+    type = st.radio("Upload data or Input data?", options=( "Input","Upload data"))
+    if type=="Upload data":
         # Upload file
         st.write(""" Tải lên dữ liệu training phân cụm khách hàng theo định dạng:
         ['customer_id', 'Recency', 'Frequency', 'Monetary']""")
         st.image("data_upload_predict_new_format.png")
-        uploaded_file_3 = st.file_uploader("Choose a file", type=['csv'], key = 'Predict')
+        uploaded_file_3 = st.file_uploader("Choose a file", type=['csv'], key = 'predict')
         if uploaded_file_3 is not None:
             data_input = load_data(uploaded_file_3)
             # st.write(data_input.columns)
@@ -509,15 +527,18 @@ elif choice == "Predict new customer":
                                        'Monetary': [Monetary]})
             flag = True
     
-    if flag:
-        st.markdown("**Input:**")
-        st.dataframe(data_input)
-        x_new = scaling_model.transform(data_input[['Recency','Frequency','Monetary']])
-        data_input['predict'] = classification_model.predict(x_new)
-        data_input['predict'] = data_input['predict'].map(inverse_map)
-        st.markdown("**Result:**")
-        st.dataframe(data_input)
-        st.download_button(label="Download predicted data as CSV",
-                    file_name='predicted_data.csv',
-                    mime='text/csv',
-                    data=convert_df(data_input))
+    if st.button('Run Predict New'):
+        if flag:
+            st.markdown("**Input:**")
+            st.dataframe(data_input)
+            x_new = scaling_model.transform(data_input[['Recency','Frequency','Monetary']])
+            data_input['predict'] = classification_model.predict(x_new)
+            data_input['predict'] = data_input['predict'].map(inverse_map)
+            st.markdown("**Result:**")
+            st.dataframe(data_input)
+            st.download_button(label="Download predicted data as CSV",
+                        file_name='predicted_data.csv',
+                        mime='text/csv',
+                        data=convert_df(data_input))
+        else:
+            st.write("Please insert the data input to predict")

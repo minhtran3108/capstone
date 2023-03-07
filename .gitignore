@@ -23,4 +23,5 @@ venv/**
 **/log
 *.md
 *.dat
+*.ipynb
 __pycache__
