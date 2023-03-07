@@ -146,14 +146,12 @@ st.set_page_config(
     page_icon="🤖",)
 
 st.sidebar.success("Let ML algorithms help you do customer segmentation job")
-
-st.markdown("<h1 style='text-align: center;'>Capstone Project</h1>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center;'>Customer Segmentation</h2>", unsafe_allow_html=True)
-# Read data
+st.markdown("<h2 style='text-align: center;'>Customer Segmentation with ML algorithm </h2>", unsafe_allow_html=True)
+# Load data
 # data = load_data_train('train_data/CDNOW_master.csv')
 data = load_data_train('train_data/CDNOW_sample.csv')
 # Upload file
-st.write("""## Read data""")
+st.write("""### Load data""")
 st.write(""" Tải lên dữ liệu transaction data theo định dạng như hình sau:\n
 ['customer_id', 'order_date', 'order_quantity', 'order_amounts'] """)
 st.image("data_upload_format.png")
@@ -169,7 +167,7 @@ st.code('{:,} transactions don\'t have a customer id'.format(data[data.customer_
 st.code('{:,} unique customer_id'.format(len(data.customer_id.unique())))
 # RFM
 data_RFM = calculate_RFM(data)
-st.write(""" ## Calculate RFM for each customers """)
+st.write(""" ### Calculate RFM for each customers """)
 st.write('Dữ liệu sau khi tính toán RFM cho',len(data_RFM),'khách hàng'
             ,(data_RFM.head(5)))
 st.write('Thông tin của dữ liệu')
@@ -183,8 +181,8 @@ st.image(fig)
 # st.write('Trực quan hoá dữ liệu sau khi được xử lý')
 # fig = visualize_numeric_data(data_RFM, 'customer_id')
 # st.image(fig)
-st.write("## Customer Segmentation")
-st.write("## Hierarchical")
+st.write("### ML algorithm to do customer segmentation")
+st.write("#### Hierarchical")
 st.write("Áp dụng thuật toán Hierarchical với số lượng Cluster mong muốn là 4")
 data_RFM["RFM_Cluster"] = get_hc_labels(data_RFM)
 # st.write("Dataframe:",data_RFM)
@@ -213,7 +211,7 @@ st.dataframe(rfm_hc_agg)
 # Visualization the Result
 colors_dict3 = {'RISK':'yellow','BIG SPENDER':'royalblue',
         'REGULAR':'green', 'STARS':'gold'}
-st.write("""## Visualization the Result""")
+st.write("""### Result Visualization """)
 
 ################################################################
 ## Radio box
@@ -302,9 +300,9 @@ elif chart_type == 'Customer Segmentation - 3D Scatter Plot':
     st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot 3D </h3>", unsafe_allow_html=True)
     st.plotly_chart(fig6)
 
-## Export the result
-st.write("# Export the result")
-st.write("Dữ liệu phân nhóm khách hàng", data_RFM[:2357])
+#### Export the result
+st.write("### Save the result")
+st.write("Dữ liệu phân nhóm khách hàng", data_RFM[::150])
 # data_save_fn = 'result_data/customer_segment_data.csv'
 # data_RFM.to_csv(data_save_fn,index = False).encode('utf-8')
 st.download_button(label="Download customer segment data as CSV",

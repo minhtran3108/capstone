@@ -107,16 +107,12 @@ st.set_page_config(
     page_icon="🌟",)
 
 st.sidebar.success("Now, you can predict your new customer")
-
-st.markdown("<h1 style='text-align: center;'>Capstone Project</h1>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center;'>Customer Segmentation</h2>", unsafe_allow_html=True)
-st.subheader("Predict new customer by KMeans based on Hierarchical Clustering")
+st.markdown("<h2 style='text-align: center;'>Predict new customer by KMeans based on Hierarchical Clustering</h2>", unsafe_allow_html=True)
 current_labels = ['STARS','BIG SPENDER','REGULAR','RISK']
 # Upload file
-st.write("""## Read data""")
+st.write("""### Load training data""")
 data = load_data('train_data/customer_segment_data_master.csv')
-st.write("### Training data")
-st.write(""" Tải lên dữ liệu training phân cụm khách hàng theo định dạng:\n
+st.write(""" Có thể tải lên dữ liệu training phân cụm khách hàng theo định dạng:\n
 ['customer_id', 'Recency', 'Frequency', 'Monetary', 'RFM_Cluster']""")
 st.write('Với các nhóm khách hàng như sau:')
 s= ''
@@ -138,12 +134,12 @@ st.write('Chuyển đổi cột dữ liệu phân loại sang kiểu số', map_
 data['target'] = data['RFM_Cluster'].map(map_dict)
 # Code
 # Build Model with KNN
-st.write("## Build Model with KNN and find the best ParaMeter with GRIDSEARCHCV")
+st.write("### Build Model with KNN")
 X = data.drop(['customer_id', 'RFM_Cluster', 'target'], axis = 1)
 y = data.target
 X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3, random_state=42)
 ## Scaling data
-st.write("### Chuẩn hoá dữ liệu bằng Standard Scaler")
+st.write("#### Chuẩn hoá dữ liệu bằng Standard Scaler")
 with st.echo():
     scaler_wrapper = SklearnTransformerWrapper(StandardScaler()) 
     X_train = scaler_wrapper.fit_transform(X_train, ['Recency', 'Frequency', 'Monetary'])
@@ -151,24 +147,24 @@ with st.echo():
 
 ## Build Model
 ### GridSearch to find best Parameter
-st.write("### Find the best ParaMeter with GridSearchCV")
+st.write("#### Find the best ParaMeter with GridSearchCV")
 # Fit the best model to the training data, fit to train data
 model = KNN_best_model(X_train, y_train)    
 ### Accuracy
-st.write("### Accuracy")
+st.write("##### Accuracy")
 train_accuracy = accuracy_score(y_train,model.predict(X_train))*100
 test_accuracy = accuracy_score(y_test,model.predict(X_test))*100
 st.code(f'Train accuracy: {round(train_accuracy,2)}% \nTest accuracy: {round(test_accuracy,2)}%')
 st.markdown("**Model KNN hoạt động phù hợp trên tập dữ liệu**")
 
-st.write("## Result Report")    
+st.write("#### Result Report")    
 chart_type = st.radio(
 "Result Report",
 ('Classification Report',
 'Confusion Matrix',
 'ROC CURVE',))
 if chart_type == 'Confusion Matrix':        
-    st.write("### Confusion Matrix")
+    st.write("##### Confusion Matrix")
     ### Confusion Matrix
     cm = ConfusionMatrix(model, classes=y.unique())
     # Fit fits the passed model. This is unnecessary if you pass the visualizer a pre-fitted model
@@ -177,19 +173,19 @@ if chart_type == 'Confusion Matrix':
     st_yellowbrick(cm)
 ### Classification Report
 if chart_type == 'Classification Report':        
-    st.write("### Classification Report")
+    st.write("##### Classification Report")
     clr = ClassificationReport(model, classes=y.unique(), support=True)
     clr.fit(X_train, y_train)        
     clr.score(X_test, y_test)        
     st_yellowbrick(clr)   
 ### ROC AUC 
 if chart_type == 'ROC CURVE':
-    st.write('### ROC CURVE')
+    st.write('##### ROC CURVE')
     rocauc = ROCAUC(model, classes=y.unique()) 
     rocauc.fit(X_train, y_train)        
     rocauc.score(X_test, y_test,)        
     st_yellowbrick(rocauc)  
-st.markdown("**Thuật toán nhận diện tốt nhóm khách hàng tiềm năng là STARS và BIGSPENDER**")
+# st.markdown("**Thuật toán nhận diện tốt nhóm khách hàng tiềm năng là STARS và BIGSPENDER**")
 ################################
 # Save classification model as pickle
 pkl_model_filename = "model/KNN_pickle.pkl"
@@ -216,7 +212,7 @@ with col2:
     
 ################################################################
 ### Predict New 
-st.write("## Predict New Customer")
+st.write("### Predict New Customer")
 # Load scaling model pickle
 scaling_model = load_pickle("model/scaler_pickle.pkl")
 # Load model pickle
@@ -266,7 +262,7 @@ if type=="Input":
                                     'Monetary': [Monetary]})
         flag = True
 
-if st.button('Run Predict New'):
+if st.button('Predict New'):
     if flag:
         st.markdown("**Input:**")
         st.dataframe(data_input)
@@ -280,4 +276,4 @@ if st.button('Run Predict New'):
                     mime='text/csv',
                     data=convert_df(data_input))
     else:
-        st.write("Please insert the data input to predict")
+        st.write("Please upload the data input to predict")
