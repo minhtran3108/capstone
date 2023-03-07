@@ -122,13 +122,12 @@ st.set_page_config(
 
 st.sidebar.success("This session is where you can looking for valued customers by RFM Values")
 
-st.markdown("<h1 style='text-align: center;'>Capstone Project</h1>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center;'>Customer Segmentation</h2>", unsafe_allow_html=True)
-# Read data
+st.markdown("<h2 style='text-align: center;'>Customer Segmentation Manual</h2>", unsafe_allow_html=True)
+# Load data
 # data = load_data_train('train_data/CDNOW_master.csv')
 data = load_data_train('train_data/CDNOW_sample.csv')
 # Upload file
-st.write("""## Read data""")
+st.write("""### Load data""")
 st.write(""" Tải lên dữ liệu transaction data theo định dạng như hình sau:\n
 ['customer_id', 'order_date', 'order_quantity', 'order_amounts'] """)
 st.image("data_upload_format.png")
@@ -142,9 +141,8 @@ st.dataframe(data.head(5))
 st.code('Transactions timeframe from {} to {}'.format(data['order_date'].min(), data['order_date'].max()))
 st.code('{:,} transactions don\'t have a customer id'.format(data[data.customer_id.isnull()].shape[0]))
 st.code('{:,} unique customer_id'.format(len(data.customer_id.unique())))
-st.markdown("## Calculate RFM Values")
 data_RFM = calculate_RFM(data)
-st.write(""" ## Calculate RFM for each customers """)
+st.write(""" ### Calculate RFM for each customers """)
 st.write('Dữ liệu sau khi tính toán RFM cho',len(data_RFM),'khách hàng'
             ,(data_RFM.head(5)))
 st.write('Thông tin của dữ liệu')
@@ -152,7 +150,7 @@ st.text(info_dataframe(data_RFM))
 st.write('Trực quan hoá các thông số RFM')
 fig = visualize_numeric_data(data_RFM, 'customer_id')
 st.image(fig)
-st.markdown("## Choose customer by RFM Values")
+st.markdown("### Choose customer by RFM Values")
 with st.container(): 
     min = int(data_RFM.Recency.min())
     max = int(data_RFM.Recency.max())
@@ -190,7 +188,7 @@ if st.session_state['run'] == True:
     st.markdown("**RFM Mean Values of selected data:**")
     st.dataframe(rfm_agg)
     ################################################################
-    st.write('## Visualization')
+    st.write('### Visualization')
     ################################################################
     ## BarPlot
     fig1, ax1 = plt.subplots(figsize=(8, 8))
@@ -225,7 +223,7 @@ if st.session_state['run'] == True:
     st.pyplot(fig3)
 
     ## Export the result
-    st.write("## Save the selected data")
+    st.write("### Save the selected data")
     data_save = data_RFM[data_RFM['RFM_Cluster']=='Selected']
     data_save = data_save.drop('RFM_Cluster', axis = 1).reset_index(drop = True)
     st.write("Dữ liệu khách hàng được lựa chọn", data_save[::10])
