@@ -244,7 +244,7 @@ if chart_type == 'Customer Segmentation & Amount Spent':
     ax2.set_ylabel("TotalAmount ($) ", color='red', fontsize=14)
     ax2.tick_params(axis="y", labelcolor='red')
     fig1.suptitle("Customer Segment & Amount Spent - Hierarchical", fontsize=20)
-    st.markdown("<h3 style='text-align: center; color: black;'>Bar chart</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Bar chart</h3>", unsafe_allow_html=True)
     st.pyplot(fig1)
     fn1 = 'graph/Hierarchical_Customer_SegmentandAmountSpent.png'
     save_graph(fig1, fn1)
@@ -257,7 +257,7 @@ elif chart_type == 'Customer Segmentation - Ration':
     plt.title('Tỉ lệ của các cluster',fontsize=13)
     plt.legend(labels=rfm_hc_agg['RFM_Cluster'], loc="upper left")
     plt.axis('off')
-    st.markdown("<h3 style='text-align: center; color: black;'>Pie chart</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Pie chart</h3>", unsafe_allow_html=True)
     st.pyplot(fig3)
     fn3 = 'graph/Hierarchical_Customer_Segment_Ration_PieChart.png'
     save_graph(fig3, fn3)
@@ -276,7 +276,7 @@ elif chart_type == 'Customer Segmentation - Tree map':
 
     ax4.set_title("Customers Segments - Hierarchical",fontsize=26,fontweight="bold")
     plt.axis('off')
-    st.markdown("<h3 style='text-align: center; color: black;'>Tree Map</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Tree Map</h3>", unsafe_allow_html=True)
     st.pyplot(fig4)
     fn4 = 'graph/Hierarchical_Customer_Segment_TreeMap.png'
     save_graph(fig4, fn4)
@@ -287,7 +287,7 @@ elif chart_type == 'Customer Segmentation - Scatter Plot':
     fig5 = px.scatter(rfm_hc_agg, x="RecencyMean", y="MonetaryMean", size="FrequencyMean",
                     color = "RFM_Cluster", color_discrete_map = colors_dict3,
                     hover_name="RFM_Cluster", size_max=100)
-    st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Scatter Plot</h3>", unsafe_allow_html=True)
     st.plotly_chart(fig5)
 ################################################################
 elif chart_type == 'Customer Segmentation - 3D Scatter Plot':
@@ -297,7 +297,7 @@ elif chart_type == 'Customer Segmentation - 3D Scatter Plot':
                     color = 'RFM_Cluster', opacity=0.3,color_discrete_map = colors_dict3)
     fig6.update_traces(marker=dict(size=5),
                     selector=dict(mode='markers'))
-    st.markdown("<h3 style='text-align: center; color: black;'>Scatter Plot 3D </h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Scatter Plot 3D </h3>", unsafe_allow_html=True)
     st.plotly_chart(fig6)
 
 #### Export the result

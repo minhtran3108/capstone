@@ -208,7 +208,7 @@ if st.session_state['run'] == True:
     ax2.set_yticklabels(['{:,}'.format(int(x)) for x in ax2.get_yticks().tolist()])
     ax2.set_ylabel("TotalAmount ($) ", color='red', fontsize=14)
     ax2.tick_params(axis="y", labelcolor='red')
-    fig1.suptitle("Customer Segment & Amount Spent - Hierarchical", fontsize=20)
+    fig1.suptitle("Customer Segment & Amount Spent", fontsize=20)
     st.markdown("<h3 style='text-align: center;'>Bar chart</h3>", unsafe_allow_html=True)
     st.pyplot(fig1)
 
